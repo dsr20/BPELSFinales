@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://sample.bpel.org/bpel/sample" xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop" xmlns:wsdl="http://www.example.org/proveedor1/" xmlns:wsdl1="http://www.example.org/proveedor2/" xmlns:wsdl2="http://www.example.org/proveedor3/" name="ReservaPa" targetNamespace="http://sample.bpel.org/bpel/sample">
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     TYPE DEFINITION - List of types participating in this BPEL process 
+     The BPEL Designer will generate default request and response types
+     but you can define or import any XML Schema type and use them as part 
+     of the message types.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <plnk:partnerLinkType name="Proveedor1PLN">
+    <plnk:role name="Proveedor1Role" portType="wsdl:proveedor1"/>
+  </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="Proveedor2PLN">
+    <plnk:role name="Proveedor2Role" portType="wsdl1:proveedor2"/>
+  </plnk:partnerLinkType>
+    <plnk:partnerLinkType name="Proveedor3PLN">
+    <plnk:role name="Proveedor3Role" portType="wsdl2:proveedor3"/>
+  </plnk:partnerLinkType>
+    <import location="proveedor1.wsdl" namespace="http://www.example.org/proveedor1/"/>
+    <import location="proveedor2.wsdl" namespace="http://www.example.org/proveedor2/"/>
+    <import location="proveedor3.wsdl" namespace="http://www.example.org/proveedor3/"/>
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://sample.bpel.org/bpel/sample">
+
+            <element name="ReservaPaRequest">
+                <complexType>
+                    <sequence>
+                        <element name="input" type="int"/>
+                        <element name="proveedor" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+
+            <element name="ReservaPaResponse">
+                <complexType>
+                    <sequence>
+                    	<element name="result" type="double"/>
+                    	<element name="Proveedor" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </schema>
+    </types>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     MESSAGE TYPE DEFINITION - Definition of the message types used as 
+     part of the port type defintions
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <message name="ReservaPaRequestMessage">
+        <part element="tns:ReservaPaRequest" name="payload"/>
+    </message>
+    <message name="ReservaPaResponseMessage">
+        <part element="tns:ReservaPaResponse" name="payload"/>
+    </message>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PORT TYPE DEFINITION - A port type groups a set of operations into
+     a logical service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+
+    <!-- portType implemented by the ReservaPa BPEL process -->
+    <portType name="ReservaPa">
+        <operation name="process">
+            <input message="tns:ReservaPaRequestMessage"/>
+            <output message="tns:ReservaPaResponseMessage"/>
+        </operation>
+    </portType>   
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PARTNER LINK TYPE DEFINITION
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <plnk:partnerLinkType name="ReservaPa">
+        <plnk:role name="ReservaPaProvider" portType="tns:ReservaPa"/>
+    </plnk:partnerLinkType>
+    
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     BINDING DEFINITION - Defines the message format and protocol details
+     for a web service.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <binding name="ReservaPaBinding" type="tns:ReservaPa">
+    	<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    	<operation name="process">
+    		<soap:operation soapAction="http://sample.bpel.org/bpel/sample/process"/>
+    		<input>
+    			<soap:body use="literal"/>
+    		</input>
+    		<output>
+    			<soap:body use="literal"/>
+    		</output>
+    	</operation>
+    </binding>
+
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     SERVICE DEFINITION - A service groups a set of ports into
+     a service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <service name="ReservaPaService">
+    	<port binding="tns:ReservaPaBinding" name="ReservaPaPort">
+    		<soap:address location="http://localhost:8080/ode/processes/ReservaPa"/>
+    	</port>
+    </service>
+</definitions>
